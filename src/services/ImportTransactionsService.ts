@@ -49,15 +49,18 @@ class ImportTransactionsService {
           },
         });
 
-        const category_id = categoryExists
-          ? categoryExists.id
-          : (
-              await categoriesRepository.save(
-                categoriesRepository.create({
-                  title: category,
-                }),
-              )
-            ).id;
+        if (categoryExists) {
+          const category_id = categoryExists.id;
+
+          return category_id;
+        }
+
+        const newCategory = categoriesRepository.create({
+          title: category,
+        });
+        const category_id = newCategory.id;
+
+        await categoriesRepository.save(newCategory);
 
         return category_id;
       }),
